@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">36.11% </span>
+        <span class="strong">50% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>13/36</span>
+        <span class='fraction'>18/36</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">5% </span>
+        <span class="strong">25% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>1/20</span>
+        <span class='fraction'>5/20</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">22.22% </span>
+        <span class="strong">33.33% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>2/9</span>
+        <span class='fraction'>3/9</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">34.29% </span>
+        <span class="strong">48.57% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>12/35</span>
+        <span class='fraction'>17/35</span>
       </div>
     </div>
   </div>
-  <div class='status-line low'></div>
+  <div class='status-line medium'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -160,27 +160,27 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -264,7 +264,7 @@ router.post('/', jsonParser, (req, res) =&gt; {
     const requiredFields = ['username', 'password', 'email']; 
     const missingField = requiredFields.find(field =&gt; !(field in req.body));
     
-    <span class="missing-if-branch" title="else path not taken" >E</span>if(missingField) {
+    if(missingField) {
         return res.status(422).json({
             code: 422, 
             reason: 'Validation Error', 
@@ -275,13 +275,13 @@ router.post('/', jsonParser, (req, res) =&gt; {
 &nbsp;
     // checking the format of string fields
 &nbsp;
-    const stringFields = <span class="cstat-no" title="statement not covered" >['username', 'password', 'email', 'lastname', 'firstname']; </span>
-    const nonStringField = <span class="cstat-no" title="statement not covered" >stringFields.find(</span>
-<span class="fstat-no" title="function not covered" >        fi</span>eld =&gt; <span class="cstat-no" title="statement not covered" >field in req.body &amp;&amp; typeof req.body[field] !== 'string'</span>
+    const stringFields = ['username', 'password', 'email', 'lastname', 'firstname']; 
+    const nonStringField = stringFields.find(
+        field =&gt; field in req.body &amp;&amp; typeof req.body[field] !== 'string'
     ); 
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (nonStringField) {</span>
-<span class="cstat-no" title="statement not covered" >        return res.status(422).json({</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (nonStringField) {
+        return res.status(422).json({
             code: 422, 
             reason: 'Validation Error', 
             message: 'Incorrect field type: expected string', 
@@ -352,7 +352,7 @@ module.exports = { router }</pre></td></tr>
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 25 2018 12:41:31 GMT-0800 (PST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 25 2018 13:06:13 GMT-0800 (PST)
 </div>
 </div>
 <script src="../../prettify.js"></script>

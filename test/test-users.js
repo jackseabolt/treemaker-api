@@ -19,21 +19,21 @@ describe('/users/', function() {
     const usernameB = 'exampleUsernameB'; 
     const passwordB = 'examplePasswordB'; 
 
-    before(function () {
+    before(() => {
         return runServer(); 
     });
 
-    after(function() {
+    after(() => {
         return closeServer(); 
     });
 
-    afterEach(function() {
+    afterEach(() => {
         return User.remove({}); 
     }); 
 
     describe('/users/', function() {
         describe('POST', function() {
-            it('should reject users without a username', function() {
+            it('should reject users without a username', () => {
                 return chai
                     .request(app)
                     .post('/users/')
@@ -47,9 +47,73 @@ describe('/users/', function() {
                         }
                         const res = err.response; 
                         expect(res).to.have.status(422); 
-                    })
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.message).to.equal('Missing field'); 
+                        expect(res.body.location).to.equal('username'); 
+                        expect(res.body.code).to.equal(422); 
+                    }); 
                     
-            })
-        })
-    })
-})
+            });
+            it('should reject users without a email', () => {
+                return chai
+                    .request(app)
+                    .post('/users/')
+                    .send({ username, password })
+                    .then(() => {
+                        expect.fail(null, null, 'Request should not succeed')
+                    })
+                    .catch(err => {
+                        if (err instanceof chai.AssertionError) {
+                            throw err; 
+                        }
+                        const res = err.response; 
+                        expect(res).to.have.status(422);
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.message).to.equal('Missing field'); 
+                        expect(res.body.location).to.equal('email'); 
+                        expect(res.body.code).to.equal(422);  
+                    }); 
+            });
+            it('should reject users without a password', () => {
+                return chai
+                    .request(app)
+                    .post('/users/')
+                    .send({ username, email })
+                    .then(() => {
+                        expect.fail(null, null, 'Request should not succeed')
+                    })
+                    .catch(err => {
+                        if (err instanceof chai.AssertionError) {
+                            throw err; 
+                        }
+                        const res = err.response; 
+                        expect(res).to.have.status(422);
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.message).to.equal('Missing field'); 
+                        expect(res.body.location).to.equal('password'); 
+                        expect(res.body.code).to.equal(422);  
+                    }); 
+            }); 
+            it('should reject users with non-string password', () => {
+                return chai
+                    .request(app)
+                    .post('/users')
+                    .send({ username, email, password: 12345678910 })
+                    .then(() => {
+                        expect.fail(null, null, 'Request should not succeed')
+                    })
+                    .catch(err => {
+                        if (err instanceof chai.AssertionError) {
+                            throw err;
+                        }
+                        const res = err.response;
+                        expect(res).to.have.status(422); 
+                        expect(res.body.message).to.equal('Incorrect field type: expected string');
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.location).to.equal('password');
+                        expect(res.body.code).to.equal(422); 
+                    });
+            });
+        });
+    });
+});
