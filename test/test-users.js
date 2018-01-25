@@ -214,6 +214,83 @@ describe('/users/', function() {
                         expect(res.body.code).to.equal(422); 
                     }); 
             }); 
+            it('should reject usernames with no characters', () => {
+                return chai
+                    .request(app)
+                    .post('/users')
+                    .send({ username: '', email, password })
+                    .then(() => {
+                        expect.fail(null, null, 'Request should not succeed')
+                    })
+                    .catch(err => {
+                        if(err instanceof chai.AssertionError) {
+                            throw err; 
+                        }
+                        const res = err.response; 
+                        expect(res).to.have.status(422); 
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.message).to.equal('Must be at least 1 characters long'); 
+                        expect(res.body.location).to.equal('username'); 
+                        expect(res.body.code).to.equal(422); 
+                    });
+            }); 
+            it('should reject passwords with less than 10 characters', () => {
+                return chai
+                    .request(app)
+                    .post('/users')
+                    .send({ username, email, password: 'test' })
+                    .then(() => {
+                        expect.fail(null, null, 'Request should not succeed')
+                    })
+                    .catch(err => {
+                        if(err instanceof chai.AssertionError) {
+                            throw err; 
+                        }
+                        const res = err.response; 
+                        expect(res).to.have.status(422); 
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.message).to.equal('Must be at least 10 characters long'); 
+                        expect(res.body.location).to.equal('password'); 
+                        expect(res.body.code).to.equal(422); 
+                    });
+            }); 
+            it('should reject passwords with more than 72 characters', () => {
+                return chai
+                    .request(app)
+                    .post('/users')
+                    .send({ username, email, password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' })
+                    .then(() => {
+                        expect.fail(null, null, 'Request should not succeed')
+                    })
+                    .catch(err => {
+                        if(err instanceof chai.AssertionError) {
+                            throw err; 
+                        }
+                        const res = err.response; 
+                        expect(res).to.have.status(422); 
+                        expect(res.body.reason).to.equal('Validation Error'); 
+                        expect(res.body.message).to.equal('Must be at most 72 characters long'); 
+                        expect(res.body.location).to.equal('password'); 
+                        expect(res.body.code).to.equal(422); 
+                    });
+            }); 
+            it('should create a user when given the proper params', () => {
+                return chai
+                    .request(app)
+                    .post('/users/')
+                    .send({ username, password, email })
+                    .then(res => {
+                        expect(res).to.have.status(201);
+                        expect(res.body).to.be.an('object')
+                        expect(res.body).to.have.keys('username', 'email', 'id', 'families'); 
+                        expect(res.body.username).to.equal(username); 
+                        expect(res.body.email).to.equal(email); 
+                        return User.findOne({ username }); 
+                    })
+                    .then(user => {
+                        expect(user).to.not.be.null; 
+                    })
+            }); 
         });
     });
 });
