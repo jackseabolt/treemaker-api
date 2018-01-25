@@ -3,7 +3,7 @@ const app = express();
 const morgan = require('morgan'); 
 const mongoose = require('mongoose');
 const cors = require('cors');  
-const { CLIENT_ORIGIN, PORT } = require('./config'); 
+const { CLIENT_ORIGIN, PORT, DATABASE_URL } = require('./config'); 
 const { router: usersRouter } = require('./users/router'); 
 
 mongoose.Promise = global.Promise; 
@@ -28,19 +28,36 @@ app.get('/', (req, res) => {
 
 let server; 
 function runServer() {
-    server = app.listen(PORT, () => {
-        console.log(`The API is listening on ${PORT}`); 
-    })
+    return new Promise((resolve, reject) => {
+        mongoose.connect(DATABASE_URL, err => {
+            if(err) {
+                return reject(err)
+            }
+            server = app.listen(PORT, () => {
+                console.log(`The API is listening on ${PORT}`); 
+            })
+            .on('error', err => {
+                mongoose.disconnect(); 
+                reject(err); 
+            });
+        });
+    });
 }
 
 function closeServer() {
-    return server.close(err => {
-        if(err) {
-            return console.error(err); 
-        }
-    })
+    return mongoose.disconnect().then(() => {
+        return new Promise((resolve, reject => {
+            console.log('Closing server'); 
+            server.close(err => {
+                if(err) {
+                    return reject(err); 
+                }
+                resolve(); 
+            }); 
+        })); 
+    }); 
 }
 
 if(require.main === module) {
-    runServer()
+    runServer().catch(err => console.error(err)); 
 }
