@@ -33,7 +33,6 @@ describe('/users/', function() {
 
     describe('/users/', function() {
         describe('POST', function() {
-            console.log('IT GOT HERE');
             it('should reject users without a username', function() {
                 return chai
                     .request(app)
