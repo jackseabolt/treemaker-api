@@ -17,3 +17,18 @@ const UserSchema = mongoose.Schema({
         }
     ]
 }); 
+
+UserSchema.methods.apiRepr = function() {
+    return {
+        id: this._id,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        username: this.username,
+        email: this.email, 
+        families: this.families 
+    }; 
+}; 
+
+const User = mongoose.models.User || mongoose.model('User', UserSchema); 
+
+module.exports = { User }
