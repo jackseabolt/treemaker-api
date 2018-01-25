@@ -11,7 +11,6 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', jsonParser, (req, res) => {
-    console.log("CREATING USER")
     let { username, firstname, lastname, families, email, password } = req.body; 
     return User.create({ 
         username, firstname, lastname, families, email, password 
