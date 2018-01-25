@@ -1,6 +1,7 @@
 'use strict'; 
 
 const mongoose = require('mongoose'); 
+const bcrypt = require('bcryptjs'); 
 
 mongoose.Promsie = global.Promise; 
 
@@ -29,6 +30,14 @@ UserSchema.methods.apiRepr = function() {
     }; 
 }; 
 
+UserSchema.method.hashPassword = function(password) {
+    return bcrypt.hash(password, 10); 
+}
+
+UserSchema.methods.validatePassword = function(password) {
+    return bcrypt.compare(password, this.password)
+}
+
 const User = mongoose.models.User || mongoose.model('User', UserSchema); 
 
-module.exports = { User }
+module.exports = { User }; 
