@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', jsonParser, (req, res) => {
+    const requiredFields = ['username', 'password', 'email']; 
     let { username, firstname, lastname, families, email, password } = req.body; 
     return User.create({ 
         username, firstname, lastname, families, email, password 
