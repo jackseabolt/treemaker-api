@@ -30,12 +30,12 @@ UserSchema.methods.apiRepr = function() {
     }; 
 }; 
 
-UserSchema.method.hashPassword = function(password) {
+UserSchema.methods.hashPassword = function(password) {
     return bcrypt.hash(password, 10); 
 }
 
 UserSchema.methods.validatePassword = function(password) {
-    return bcrypt.compare(password, this.password)
+    return bcrypt.compare(password, this.password); 
 }
 
 const User = mongoose.models.User || mongoose.model('User', UserSchema); 

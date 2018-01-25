@@ -87,16 +87,29 @@ router.post('/', jsonParser, (req, res) => {
     // creating the user
 
     let { username, firstname, lastname, families, email, password } = req.body; 
-    return User.create({ 
-        username, firstname, lastname, families, email, password 
-    })
-    .then(user => {
-        return res.status(201).json(user.apiRepr()); 
-    })
-    .catch(err => {
-        console.error(err)
-        res.status(500).json({ code: 500, message: 'Internal server error'})
-    })
+    return User.find({ username })
+        .count()
+        .then(count => {
+            if(count > 0) {
+                return Promise.reject({
+                    code: 422, 
+                    reason: 'Validation Error', 
+                    message: 'Username already taken', 
+                    location: 'username'
+                }); 
+            }
+            return User.hashPassword(password); 
+        })
+        .then(hash => {
+            return User.create({ username, firstname, lastname, families, email, password })
+        })
+        .then(user => {
+            return res.status(201).json(user.apiRepr()); 
+        })
+        .catch(err => {
+            console.error(err)
+            res.status(500).json({ code: 500, message: 'Internal server error'})
+        })
 })
 
 module.exports = { router }
