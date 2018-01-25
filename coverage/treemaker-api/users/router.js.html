@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">63.89% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>18/36</span>
+        <span class='fraction'>23/36</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">25% </span>
+        <span class="strong">35% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>5/20</span>
+        <span class='fraction'>7/20</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">33.33% </span>
+        <span class="strong">44.44% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>3/9</span>
+        <span class='fraction'>4/9</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">48.57% </span>
+        <span class="strong">62.86% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>17/35</span>
+        <span class='fraction'>22/35</span>
       </div>
     </div>
   </div>
@@ -160,10 +160,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -174,29 +174,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -280,7 +280,7 @@ router.post('/', jsonParser, (req, res) =&gt; {
         field =&gt; field in req.body &amp;&amp; typeof req.body[field] !== 'string'
     ); 
 &nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (nonStringField) {
+    if (nonStringField) {
         return res.status(422).json({
             code: 422, 
             reason: 'Validation Error', 
@@ -291,13 +291,13 @@ router.post('/', jsonParser, (req, res) =&gt; {
 &nbsp;
     // checking the trimming on fields
 &nbsp;
-    const trimmedFields = <span class="cstat-no" title="statement not covered" >['username', 'password', 'email']; </span>
-    const nonTrimmedField = <span class="cstat-no" title="statement not covered" >trimmedFields.find(</span>
-<span class="fstat-no" title="function not covered" >        fi</span>eld =&gt; <span class="cstat-no" title="statement not covered" >req.body[field].trim() !== req.body[field]</span>
+    const trimmedFields = ['username', 'password', 'email']; 
+    const nonTrimmedField = trimmedFields.find(
+        field =&gt; req.body[field].trim() !== req.body[field]
     ); 
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (nonTrimmedField) {</span>
-<span class="cstat-no" title="statement not covered" >        return res.status(422).json({</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (nonTrimmedField) {
+        return res.status(422).json({
             code: 422, 
             reason: 'Validation Error', 
             message: 'Cannot start or end with whitespace', 
@@ -352,7 +352,7 @@ module.exports = { router }</pre></td></tr>
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 25 2018 13:06:13 GMT-0800 (PST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 25 2018 13:24:48 GMT-0800 (PST)
 </div>
 </div>
 <script src="../../prettify.js"></script>
