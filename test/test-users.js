@@ -1,13 +1,14 @@
 'use strict'; 
 
-global.DATABASE_URL = 'mongodb://localhost/treemaker-database';
-procss.env.NODE_ENV = 'test'; 
+const { DATABASE_URL } = require('../config'); 
+// 'mongodb://localhost/treemaker-database';
+process.env.NODE_ENV = 'test'; 
 const chai = require('chai'); 
 const chaiHttp = require('chai-http'); 
 const { app, runServer, closeServer } = require('../index'); 
-const { User } = require('../users'); 
+const { User } = require('../users/model'); 
 
-const exect = chai.expect; 
+const expect = chai.expect; 
 
 chai.use(chaiHttp); 
 
@@ -32,15 +33,23 @@ describe('/users/', function() {
 
     describe('/users/', function() {
         describe('POST', function() {
+            console.log('IT GOT HERE');
             it('should reject users without a username', function() {
                 return chai
                     .request(app)
                     .post('/users/')
                     .send({ password, email })
-                    .then(() => 
+                    .then(() => {
                         expect.fail(null, null, 'Request should not succeed')
-                    )
-                    expect(res).to.have.status(422); 
+                    })
+                    .catch(err => {
+                        if (err instanceof chai.AssertionError) {
+                            throw err; 
+                        }
+                        const res = err.response; 
+                        expect(res).to.have.status(422); 
+                    })
+                    
             })
         })
     })
