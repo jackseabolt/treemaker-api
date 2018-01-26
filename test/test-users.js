@@ -260,7 +260,7 @@ describe('/users/', function() {
                     .post('/users')
                     .send({ username, email, password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' })
                     .then(() => {
-                        expect.fail(null, null, 'Request should not succeed')
+                        expect.fail(null, null, 'Request should not succeed'); 
                     })
                     .catch(err => {
                         if(err instanceof chai.AssertionError) {
@@ -274,6 +274,32 @@ describe('/users/', function() {
                         expect(res.body.code).to.equal(422); 
                     });
             }); 
+            it('should reject users with duplicate usernames', () => {
+                return chai
+                    .request(app)
+                    .post('/users/')
+                    .send({ username, password, email })
+                    .then(() => {
+                        return chai
+                            .request(app)
+                            .post('/users/')
+                            .send({ username, password, email })
+                            .then(() => {
+                                expect.fail(null, null, 'Request should not succeed'); 
+                            })    
+                            .catch(err => {
+                                if(err instanceof chai.AssertionError) {
+                                    throw err;
+                                }
+                                const res = err.response; 
+                                expect(res).to.have.status(422); 
+                                expect(res.body.reason).to.equal('Validation Error'); 
+                                expect(res.body.message).to.equal('Username already taken'); 
+                                expect(res.body.location).to.equal('username'); 
+                                expect(res.body.code).to.equal(422); 
+                            })
+                    })      
+            })
             it('should create a user when given the proper params', () => {
                 return chai
                     .request(app)
