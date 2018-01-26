@@ -1,6 +1,6 @@
 'use strict'; 
 
-const { DATABASE_URL } = require('../config'); 
+const { TEST_DATABASE_URL } = require('../config'); 
 // 'mongodb://localhost/treemaker-database';
 process.env.NODE_ENV = 'test'; 
 const chai = require('chai'); 
