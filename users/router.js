@@ -6,10 +6,6 @@ const { User } = require('./model');
 const router = express.Router(); 
 const jsonParser = bodyParser.json(); 
 
-router.get('/', (req, res) => {
-    return res.json({ data: 'ROUTER SUCCESS'})
-})
-
 router.post('/', jsonParser, (req, res) => {
 
     // checking that required fields are present
@@ -101,7 +97,7 @@ router.post('/', jsonParser, (req, res) => {
             return User.hashPassword(password); 
         })
         .then(hash => {
-            return User.create({ username, firstname, lastname, families, email, password })
+            return User.create({ username, firstname, lastname, families, email, password: hash })
         })
         .then(user => {
             return res.status(201).json(user.apiRepr()); 
