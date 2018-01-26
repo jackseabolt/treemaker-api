@@ -104,7 +104,7 @@ router.post('/', jsonParser, (req, res) => {
         })
         .catch(err => {
             console.error(err)
-            res.status(500).json({ code: 500, message: 'Internal server error'})
+            res.status(err.code).json({ code: err.code, message: err.message, reason: err.reason, location: err.location })
         })
 })
 
