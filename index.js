@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');  
 const { CLIENT_ORIGIN, PORT, DATABASE_URL } = require('./config'); 
 const { router: usersRouter } = require('./users/router'); 
-const { router: familyRouter } = require('./family/router'); 
+const { router: familyRouter } = require('./families/router'); 
 
 mongoose.Promise = global.Promise; 
 
