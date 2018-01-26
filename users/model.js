@@ -27,15 +27,11 @@ UserSchema.methods.apiRepr = function() {
         username: this.username,
         email: this.email, 
         families: this.families 
-    }; 
-}; 
+    } 
+} 
 
 UserSchema.statics.hashPassword = function(password) {
     return bcrypt.hash(password, 10); 
-}
-
-UserSchema.methods.testing = function() {
-    return console.log("THE METHOD WAS CALLED") 
 }
 
 UserSchema.methods.validatePassword = function(password) {

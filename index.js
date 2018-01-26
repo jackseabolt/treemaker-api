@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');  
 const { CLIENT_ORIGIN, PORT, DATABASE_URL } = require('./config'); 
 const { router: usersRouter } = require('./users/router'); 
+const { router: familyRouter } = require('./family/router'); 
 
 mongoose.Promise = global.Promise; 
 
@@ -21,6 +22,7 @@ app.use(
 );
 
 app.use('/users', usersRouter ); 
+app.use('/families', familyRouter); 
 
 app.get('/', (req, res) => {
     return res.json({ data: 'TEST SUCESSFUL' })
