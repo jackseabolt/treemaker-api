@@ -30,8 +30,12 @@ UserSchema.methods.apiRepr = function() {
     }; 
 }; 
 
-UserSchema.methods.hashPassword = function(password) {
+UserSchema.statics.hashPassword = function(password) {
     return bcrypt.hash(password, 10); 
+}
+
+UserSchema.methods.testing = function() {
+    return console.log("THE METHOD WAS CALLED") 
 }
 
 UserSchema.methods.validatePassword = function(password) {
