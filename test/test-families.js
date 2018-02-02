@@ -249,6 +249,32 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422); 
                 }); 
         }); 
+        it('rejects families with duplicate usernames', () => {
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ password, username, family_name })
+                .then(() => {
+                    return chai
+                        .request(app)
+                        .post('/families')
+                        .send({ password, username, family_name })
+                        .then(() => {
+                            expect.fail(null, null, 'Request should not succeed')
+                        })
+                        .catch(err => {
+                            if(err instanceof chai.AssertionError) {
+                                throw err;
+                            }
+                            const res = err.response; 
+                            expect(res).to.have.status(422); 
+                            expect(res.body.reason).to.equal('Validation Error'); 
+                            expect(res.body.message).to.equal('Username already taken'); 
+                            expect(res.body.location).to.equal('username'); 
+                            expect(res.body.code).to.equal(422); 
+                        }); 
+                })
+        }); 
         it('creates families with proper params', () => {
             return chai
                 .request(app)
@@ -256,9 +282,11 @@ describe('/families', function() {
                 .send({ password, username, family_name })
                 .then(res => {
                     expect(res).to.have.status(201); 
-                })
+                    expect(res.body.username).to.equal(username); 
+                    expect(res.body.family_name).to.equal(family_name);
+                    expect(res.body.members).to.be.an('array');
+                    expect(res.body.members.length).to.equal(0); 
+                }); 
         }); 
- 
-
     });
 });
