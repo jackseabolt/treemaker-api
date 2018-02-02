@@ -3,9 +3,12 @@ const app = express();
 const morgan = require('morgan'); 
 const mongoose = require('mongoose');
 const cors = require('cors');  
+const passport = require('passport'); 
+const { localStrategy, jwtStrategy } = require('./auth/strategies');
 const { CLIENT_ORIGIN, PORT, DATABASE_URL } = require('./config'); 
 const { router: usersRouter } = require('./users/router'); 
 const { router: familyRouter } = require('./families/router'); 
+const { router: authRouter } = require('./auth/router'); 
 
 mongoose.Promise = global.Promise; 
 
@@ -21,8 +24,12 @@ app.use(
     })
 );
 
+passport.use(localStrategy); 
+passport.use(jwtStrategy); 
+
 app.use('/users', usersRouter ); 
 app.use('/families', familyRouter); 
+app.use('/auth', authRouter); 
 
 app.get('/', (req, res) => {
     return res.json({ data: 'TEST SUCESSFUL' })
