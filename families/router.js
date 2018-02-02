@@ -3,10 +3,33 @@
 const express = require('express'); 
 const bodyParser = require('body-parser'); 
 const { Family } = require('./model'); 
+const { User } = require('../users/model'); 
 const router = express.Router(); 
 const jsonParser = bodyParser.json(); 
 
 router.post('/', jsonParser, (req, res) => {
+
+    // checking that given id is valid
+
+    let { id, authToken } = req.body; 
+
+    User.findById({ id })
+        .count()
+        .then(count => {
+            if (count < 1) {
+                return Promise.reject({
+                    code: 422, 
+                    reason: 'Validation Error', 
+                    message: 'Family must be created by a user', 
+                    location: 'id'
+                })
+            } 
+            return Promise.resolve(); 
+        })
+        .catch(err => {
+            return res.status(err.code).json({code: err.code, message: err.message, reason: err.reason, location: err.location })
+        }); 
+
     
     // checking that required fields are present
 
