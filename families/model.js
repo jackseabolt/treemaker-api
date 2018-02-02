@@ -1,6 +1,7 @@
 'use strict'; 
 
 const mongoose = require('mongoose'); 
+const bcrypt = require('bcryptjs'); 
 
 const FamilySchema = mongoose.Schema({
     username: { type: String, required: true, unique: true }, 

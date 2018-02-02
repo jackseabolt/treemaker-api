@@ -249,6 +249,15 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422); 
                 }); 
         }); 
+        it('creates families with proper params', () => {
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ password, username, family_name })
+                .then(res => {
+                    expect(res).to.have.status(201); 
+                })
+        }); 
  
 
     });

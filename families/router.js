@@ -83,14 +83,40 @@ router.post('/', jsonParser, (req, res) => {
         })
     }
 
-    // creating the family
+    // checking existance of family with same username
 
-    let { family_name, firstname } = req.body; 
-    return Family.find({ family_name })
+    let { family_name, password, username } = req.body; 
+    return Family.find({ username })
         .count()
+        .then(count => {
+            if(count > 0) {
+                return Promise.reject({
+                    code: 422, 
+                    reason: 'Validation Error', 
+                    message: 'Username already taken', 
+                    location: 'username'
+                }); 
+            }
 
+    // creating fmaily
 
-
+            return Family.hashPassword(password); 
+        })
+        .then(hash => {
+            return Family.create({
+                username, 
+                family_name, 
+                password: hash, 
+                members: []
+            })
+        })
+        .then(family => {
+            return res.status(201).json(family.apiRepr()); 
+        })
+        .catch(err => {
+            console.error(err); 
+            return res.status(err.code).json({code: err.code, message: err.message, reason: err.reason, location: err.location })
+        }); 
 });
 
 
