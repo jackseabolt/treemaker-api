@@ -38,6 +38,21 @@ router.post('/', jsonParser, (req, res) => {
         }); 
     }
 
+    // checking the trimming on fields 
+
+    const trimmedFields = ['family_name', 'password']; 
+    const nonTrimmedField = trimmedFields.find(
+        field => req.body[field].trim() !== req.body[field]
+    ); 
+
+    if (nonTrimmedField) {
+        return res.status(422).json({
+            code: 422, 
+            reason: 'Validation Error', 
+            message: 'Cannot start or end with whitespace', 
+            location: nonTrimmedField
+        }); 
+    }
 
 
 

@@ -77,7 +77,6 @@ describe('/families', function() {
                     expect.fail(null, null, 'Request should not succeed')
                 })
                 .catch(err => {
-                    console.log("IT CATCHED")
                     if (err instanceof chai.AssertionError) {
                         throw err; 
                     }
@@ -87,6 +86,46 @@ describe('/families', function() {
                     expect(res.body.message).to.equal('Incorrect field type: expected string'); 
                     expect(res.body.location).to.equal('family_name'); 
                     expect(res.body.code).to.equal(422);  
+                }); 
+        }); 
+        it('rejects families with non-string passwords', () => { 
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ family_name, password: 12345 })
+                .then(() => {
+                    expect.fail(null, null, 'Request should not succeed')
+                })
+                .catch(err => {
+                    if (err instanceof chai.AssertionError) {
+                        throw err; 
+                    }
+                    const res = err.response; 
+                    expect(res).to.have.status(422); 
+                    expect(res.body.reason).to.equal('Validation Error'); 
+                    expect(res.body.message).to.equal('Incorrect field type: expected string'); 
+                    expect(res.body.location).to.equal('password'); 
+                    expect(res.body.code).to.equal(422);  
+                }); 
+        }); 
+        it('reject families non non-trimmed passwords', () => {
+            return chai 
+                .request(app)
+                .post('/families')
+                .send({ family_name, password: ' password ' })
+                .then(() => {
+                    expect.fail(null, null, 'Request should not succeed') 
+                })
+                .catch(err => {
+                    if (err instanceof chai.AssertionError) {
+                        throw err; 
+                    }
+                    const res = err.response;
+                    expect(res).to.have.status(422); 
+                    expect(res.body.reason).to.equal('Validation Error'); 
+                    expect(res.body.message).to.equal('Cannot start or end with whitespace'); 
+                    expect(res.body.location).to.equal('password'); 
+                    expect(res.body.code).to.equal(422);   
                 }); 
         }); 
     });
