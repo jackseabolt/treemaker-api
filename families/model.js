@@ -3,6 +3,7 @@
 const mongoose = require('mongoose'); 
 
 const FamilySchema = mongoose.Schema({
+    username: { type: String, required: true, unique: true }, 
     family_name: { type: String, required: true }, 
     password: { type: String, required: true }, 
     members: [
@@ -45,7 +46,8 @@ const FamilySchema = mongoose.Schema({
 
 FamilySchema.methods.apiRepr = function() {
     return {
-        fmaily_name: this.family_name,
+        username: this.username,
+        family_name: this.family_name,
         members: this.members
     }
 }
