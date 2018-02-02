@@ -25,9 +25,9 @@ router.post('/', jsonParser, (req, res) => {
     // checking the format of string fields 
 
     const stringFields = ['family_name', 'password']; 
-    const nonStringField = stringFields.find(field => {
-        field in stringFields && typeof req.body[field] !== 'string'
-    }); 
+    const nonStringField = stringFields.find(
+        field => field in req.body && typeof req.body[field] !== 'string'
+    ); 
 
     if (nonStringField) {
         return res.status(422).json({
@@ -37,6 +37,8 @@ router.post('/', jsonParser, (req, res) => {
             location: nonStringField
         }); 
     }
+
+
 
 
 });
