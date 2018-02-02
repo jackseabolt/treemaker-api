@@ -13,7 +13,8 @@ chai.use(chaiHttp);
 
 describe('/families', function() {
     const family_name = 'exampleFamilyName'; 
-    const password = 'examplePassword'; 
+    const password = 'examplePassword';
+    const username = 'exampleUsername';  
 
     before(() => {
         return runServer(); 
@@ -32,7 +33,7 @@ describe('/families', function() {
             return chai
                 .request(app)
                 .post('/families')
-                .send({ password })
+                .send({ password, username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed')
                 })
@@ -52,7 +53,7 @@ describe('/families', function() {
             return chai
                 .request(app)
                 .post('/families')
-                .send({ family_name })
+                .send({ family_name, username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed')
                 })
@@ -68,11 +69,31 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422); 
                 });
         });
+        it('rejects families without username', () => {
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ family_name, password })
+                .then(() => {
+                    expect.fail(null, null, 'Request should not succeed')
+                })
+                .catch(err => {
+                    if (err instanceof chai.AssertionError) {
+                        throw err; 
+                    }
+                    const res = err.response; 
+                    expect(res).to.have.status(422); 
+                    expect(res.body.reason).to.equal('Validation Error'); 
+                    expect(res.body.message).to.equal('Missing field'); 
+                    expect(res.body.location).to.equal('username'); 
+                    expect(res.body.code).to.equal(422); 
+                });
+        });
         it('rejects families with non-string family_names', () => { 
             return chai
                 .request(app)
                 .post('/families')
-                .send({ family_name: 12345, password })
+                .send({ family_name: 12345, password, username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed')
                 })
@@ -88,11 +109,11 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422);  
                 }); 
         }); 
-        it('rejects families with non-string passwords', () => { 
+        it('rejects families with non-string usernames', () => { 
             return chai
                 .request(app)
                 .post('/families')
-                .send({ family_name, password: 12345 })
+                .send({ family_name, password, username: 12345 })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed')
                 })
@@ -104,7 +125,7 @@ describe('/families', function() {
                     expect(res).to.have.status(422); 
                     expect(res.body.reason).to.equal('Validation Error'); 
                     expect(res.body.message).to.equal('Incorrect field type: expected string'); 
-                    expect(res.body.location).to.equal('password'); 
+                    expect(res.body.location).to.equal('username'); 
                     expect(res.body.code).to.equal(422);  
                 }); 
         }); 
@@ -112,7 +133,7 @@ describe('/families', function() {
             return chai 
                 .request(app)
                 .post('/families')
-                .send({ family_name, password: ' password ' })
+                .send({ family_name, password: ' password ', username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed') 
                 })
@@ -128,11 +149,11 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422);   
                 }); 
         });
-        it('rejects families with non-trimmed passwords', () => {
+        it('rejects families with non-trimmed family_names', () => {
             return chai 
                 .request(app)
                 .post('/families')
-                .send({ family_name: ' example ' , password })
+                .send({ family_name: ' example ' , password, username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed') 
                 })
@@ -148,11 +169,31 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422);   
                 }); 
         });
+        it('rejects families with non-trimmed usernames', () => {
+            return chai 
+                .request(app)
+                .post('/families')
+                .send({ family_name, password, username: ' example ' })
+                .then(() => {
+                    expect.fail(null, null, 'Request should not succeed') 
+                })
+                .catch(err => {
+                    if (err instanceof chai.AssertionError) {
+                        throw err; 
+                    }
+                    const res = err.response;
+                    expect(res).to.have.status(422); 
+                    expect(res.body.reason).to.equal('Validation Error'); 
+                    expect(res.body.message).to.equal('Cannot start or end with whitespace'); 
+                    expect(res.body.location).to.equal('username'); 
+                    expect(res.body.code).to.equal(422);   
+                }); 
+        });
         it('rejects families with family_names less than 1 character', () => {
             return chai
                 .request(app)
                 .post('/families')
-                .send({ password, family_name: '' })
+                .send({ password, family_name: '', username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed')
                 })
@@ -172,7 +213,7 @@ describe('/families', function() {
             return chai
                 .request(app)
                 .post('/families')
-                .send({ password: "test", family_name })
+                .send({ password: "test", family_name, username })
                 .then(() => {
                     expect.fail(null, null, 'Request should not succeed')
                 })
@@ -188,7 +229,64 @@ describe('/families', function() {
                     expect(res.body.code).to.equal(422); 
                 }); 
         }); 
- 
-
+        it('rejects families with usernames less than 10 character', () => {
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ password, family_name, username: "test" })
+                .then(() => {
+                    expect.fail(null, null, 'Request should not succeed')
+                })
+                .catch(err => {
+                    if(err instanceof chai.AssertionError) {
+                        throw err; 
+                    }
+                    const res = err.response; 
+                    expect(res).to.have.status(422); 
+                    expect(res.body.reason).to.equal('Validation Error'); 
+                    expect(res.body.message).to.equal('Must be at least 10 characters long'); 
+                    expect(res.body.location).to.equal('username'); 
+                    expect(res.body.code).to.equal(422); 
+                }); 
+        }); 
+        it('rejects families with duplicate usernames', () => {
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ password, username, family_name })
+                .then(() => {
+                    return chai
+                        .request(app)
+                        .post('/families')
+                        .send({ password, username, family_name })
+                        .then(() => {
+                            expect.fail(null, null, 'Request should not succeed')
+                        })
+                        .catch(err => {
+                            if(err instanceof chai.AssertionError) {
+                                throw err;
+                            }
+                            const res = err.response; 
+                            expect(res).to.have.status(422); 
+                            expect(res.body.reason).to.equal('Validation Error'); 
+                            expect(res.body.message).to.equal('Username already taken'); 
+                            expect(res.body.location).to.equal('username'); 
+                            expect(res.body.code).to.equal(422); 
+                        }); 
+                })
+        }); 
+        it('creates families with proper params', () => {
+            return chai
+                .request(app)
+                .post('/families')
+                .send({ password, username, family_name })
+                .then(res => {
+                    expect(res).to.have.status(201); 
+                    expect(res.body.username).to.equal(username); 
+                    expect(res.body.family_name).to.equal(family_name);
+                    expect(res.body.members).to.be.an('array');
+                    expect(res.body.members.length).to.equal(0); 
+                }); 
+        }); 
     });
 });
