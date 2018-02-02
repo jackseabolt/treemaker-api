@@ -54,6 +54,34 @@ router.post('/', jsonParser, (req, res) => {
         }); 
     }
 
+    // checking the length of fields 
+
+    const sizedFields = {
+        family_name: { min: 1 }, 
+        password: { min: 10, max: 72 }
+    }; 
+
+    const tooSmallField = Object.keys(sizedFields).find(field => 
+        'min' in sizedFields[field] && 
+        req.body[field].trim().length < sizedFields[field].min
+    )
+
+    const tooLargeField = Object.keys(sizedFields).find(field => 
+        'max' in sizedFields[field] &&
+        req.body[field].trim().length < sizedFields[field].min
+    )
+
+    if ( tooSmallField || tooLargeField) {
+        return res.status(422).json({
+            code: 422, 
+            reason: 'Validation Error', 
+            message: tooSmallField
+            ? `Must be at least ${sizedFields[tooSmallField].min} characters long`
+            : `Must be at most ${sizedFields[tooLargeField].max} characters long`,
+            location: tooSmallField || tooLargeField
+        })
+    }
+
 
 
 });

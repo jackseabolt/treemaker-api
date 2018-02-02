@@ -22,22 +22,22 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>22/22</span>
+        <span class='fraction'>29/29</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.5% </span>
+        <span class="strong">80% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>7/8</span>
+        <span class='fraction'>16/20</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>4/4</span>
+        <span class='fraction'>6/6</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>21/21</span>
+        <span class='fraction'>28/28</span>
       </div>
     </div>
   </div>
@@ -104,7 +104,35 @@
 59
 60
 61
-62</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -116,9 +144,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -147,12 +191,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -212,13 +268,41 @@ router.post('/', jsonParser, (req, res) =&gt; {
         field =&gt; req.body[field].trim() !== req.body[field]
     ); 
 &nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (nonTrimmedField) {
+    if (nonTrimmedField) {
         return res.status(422).json({
             code: 422, 
             reason: 'Validation Error', 
             message: 'Cannot start or end with whitespace', 
             location: nonTrimmedField
         }); 
+    }
+&nbsp;
+    // checking the length of fields 
+&nbsp;
+    const sizedFields = {
+        family_name: { min: 1 }, 
+        password: { min: 10, max: 72 }
+    }; 
+&nbsp;
+    const tooSmallField = Object.keys(sizedFields).find(field =&gt; 
+        'min' in sizedFields[field] &amp;&amp; 
+        req.body[field].trim().length &lt; sizedFields[field].min
+    )
+&nbsp;
+    const tooLargeField = Object.keys(sizedFields).find(field =&gt; 
+        'max' in sizedFields[field] &amp;&amp;
+        req.body[field].trim().length &lt; sizedFields[field].min
+    )
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if ( tooSmallField || <span class="branch-1 cbranch-no" title="branch not covered" >tooLargeField)</span> {
+        return res.status(422).json({
+            code: 422, 
+            reason: 'Validation Error', 
+            message: tooSmallField
+            ? `Must be at least ${sizedFields[tooSmallField].min} characters long`
+            : <span class="branch-1 cbranch-no" title="branch not covered" >`Must be at most ${sizedFields[tooLargeField].max} characters long`,</span>
+            location: tooSmallField || <span class="branch-1 cbranch-no" title="branch not covered" >tooLargeField</span>
+        })
     }
 &nbsp;
 &nbsp;
@@ -232,7 +316,7 @@ module.exports = { router }; </pre></td></tr>
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Feb 02 2018 07:19:21 GMT-0800 (PST)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri Feb 02 2018 07:45:53 GMT-0800 (PST)
 </div>
 </div>
 <script src="../../prettify.js"></script>
