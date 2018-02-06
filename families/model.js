@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs'); 
 
 const FamilySchema = mongoose.Schema({
-    username: { type: String, required: true, unique: true }, 
+    username: { type: String, required: true }, 
     family_name: { type: String, required: true }, 
     password: { type: String, required: true }, 
     members: [
@@ -22,22 +22,22 @@ const FamilySchema = mongoose.Schema({
             long_bio: {type: String }, 
             parents: [
                 { 
-                    id: { type: String, required: true, unique: true }
+                    parent_id: { type: String, required: true }
                 } 
             ], 
             siblings: [
                 { 
-                    id: { type: String, required: true, unique: true }
+                    sibling_id: { type: String, required: true }
                 } 
             ],
             children: [
                 { 
-                    id: { type: String, required: true, unique: true }
+                    children_id: { type: String, required: true }
                 } 
             ], 
             pictures: [
                 { 
-                    url: { type: String, required: true, unique: true }
+                    url: { type: String, required: true }
                 } 
             ],  
             
@@ -49,7 +49,8 @@ FamilySchema.methods.apiRepr = function() {
     return {
         username: this.username,
         family_name: this.family_name,
-        members: this.members
+        members: this.members, 
+        id: this.id
     }
 }
 
