@@ -5,15 +5,16 @@ const bodyParser = require('body-parser');
 const { Family } = require('./model'); 
 const { User } = require('../users/model'); 
 const router = express.Router(); 
-const jsonParser = bodyParser.json(); 
+const jsonParser = bodyParser.json();
+const passport = require('passport');
+const jwtAuth = passport.authenticate('jwt', { session: false }); 
 
-router.post('/', jsonParser, (req, res) => {
+router.post('/', jwtAuth, jsonParser, (req, res) => {
 
     // checking that given id is valid
+    let { family_name, password, username, id } = req.body; 
 
-    let { id, authToken } = req.body; 
-
-    User.findById({ id })
+    User.findOne({ _id: id})
         .count()
         .then(count => {
             if (count < 1) {
@@ -24,13 +25,12 @@ router.post('/', jsonParser, (req, res) => {
                     location: 'id'
                 })
             } 
-            return Promise.resolve(); 
+            return Promise.resolve();  
         })
         .catch(err => {
-            return res.status(err.code).json({code: err.code, message: err.message, reason: err.reason, location: err.location })
+            return res.sendStatus(422).json({code: err.code, message: err.message, reason: err.reason, location: err.location })
         }); 
 
-    
     // checking that required fields are present
 
     const requiredFields = ['family_name', 'username', 'password']; 
@@ -108,7 +108,7 @@ router.post('/', jsonParser, (req, res) => {
 
     // checking existance of family with same username
 
-    let { family_name, password, username } = req.body; 
+
     return Family.find({ username })
         .count()
         .then(count => {
@@ -120,17 +120,20 @@ router.post('/', jsonParser, (req, res) => {
                     location: 'username'
                 }); 
             }
-
-    // creating fmaily
+            
+    // creating family
 
             return Family.hashPassword(password); 
         })
         .then(hash => {
+            console.log("CHECKOUTPOINT AAA")
+            console.log(`Username: ${username}`)
+            console.log(`FamilyName: ${family_name}`)
+            console.log(`Password: ${hash}`)
             return Family.create({
-                username, 
                 family_name, 
                 password: hash, 
-                members: []
+                username: "something else"
             })
         })
         .then(family => {
@@ -141,6 +144,41 @@ router.post('/', jsonParser, (req, res) => {
             return res.status(err.code).json({code: err.code, message: err.message, reason: err.reason, location: err.location })
         }); 
 });
+
+
+router.get('/:id', jsonParser, (req, res) => {
+    return Family.findOne({_id: req.params.id })
+        .then(family => {
+            res.status(200).json(family.apiRepr())
+        })
+        .catch(err => {
+            return res.status(404).json({
+                code: 404, 
+                reason: "Not Found Error", 
+                message: "Family could not be found", 
+                location: 'params :id' 
+            })
+        }); 
+})
+
+
+// router.put('/:id', (req, res) => {
+//     return Family.find({ username })
+//     .count()
+//     .then(count => {
+//         if(count > 0) {
+//             return Promise.reject({
+//                 code: 404, 
+//                 reason: 'Validation Error', 
+//                 message: 'Family not found', 
+//                 location: 'id'
+//             }); 
+//         }
+        
+//     // creating family
+
+//     })
+// })
 
 
 module.exports = { router }; 
