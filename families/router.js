@@ -173,7 +173,7 @@ router.post('/:id/members', jsonParser, (req, res) => {
             // validates presence of relative data
 
             let parents, children, siblings, pictures; 
-            
+
             if (!(req.body.parents || req.body.children || 
                 req.body.siblings || req.body.pictures) &&
                 totalMembers >= 1
@@ -229,14 +229,38 @@ router.post('/:id/members', jsonParser, (req, res) => {
                 pictures
             }
 
-            console.log("NEW MEMBER", newMember, req.params.id)
-
             Family
-                .update(
+                .findOneAndUpdate(
                     { _id: req.params.id }, 
-                    { $push: { members: newMember }}
+                    { $push: { members: newMember }}, 
+                    { new: true }
                 )
                 .then(family => {
+                    if(parents) {
+                    }
+                    else if (siblings) {
+                        let newSiblingId = family.members[family.members.length -1]._id; 
+                        let siblingId = family.members.find(member => member._id = req.body.siblings)._id
+
+                        console.log("REQ ID", req.params.id)
+
+                        Family
+                            .update(
+                            { 
+                                _id: req.params.id,
+                                "members._id" : req.params.siblings 
+                            },
+                            {
+                                $push : {
+                                    "members.$.siblings" : {
+                                        "sibling_id": newSiblingId
+                                    }
+                                } 
+                            }
+                        );
+                    }
+                    else if (children) {
+                    }
                     res.sendStatus(204)
                 })
                 .catch(err => {
@@ -248,7 +272,7 @@ router.post('/:id/members', jsonParser, (req, res) => {
                 console.error(err); 
                 res.sendStatus(500); 
             }); 
-})
+}); 
 
 
 module.exports = { router }; 
